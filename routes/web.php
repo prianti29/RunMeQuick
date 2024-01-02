@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CodeExecutionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,5 +21,9 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+Route::get('/execute-code', [CodeExecutionController::class, 'showForm'])->name('execute-code');
+Route::post('/execute-code', [CodeExecutionController::class, 'executeCode']);
+Route::get('/executions', [CodeExecutionController::class, 'showExecutions']);
+
 
 require __DIR__.'/auth.php';

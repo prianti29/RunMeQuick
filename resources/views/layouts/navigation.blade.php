@@ -9,11 +9,8 @@
         <!-- Navbar Collapse -->
         <div class="collapse navbar-collapse" id="navbar-collapse">
             <ul class="nav navbar-nav" style="margin-top: 10px;">
-                @if (Auth::check())
                 <li><a href="{{ url('/dashboard') }}">Dashboard</a></li>
-                @else
-                <li><a href="{{ url('/allrepo') }}">Repositories</a></li>
-                @endif
+                <li><a href="{{ route('execute-code') }}">Code Execution</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right" style="margin-top: 5px;">
