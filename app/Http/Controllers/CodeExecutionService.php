@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Error;
 use Exception;
 use Illuminate\Http\Request;
+use ParseError;
+
 // CodeExecutionService.php
 
 class CodeExecutionService
@@ -23,7 +26,6 @@ class CodeExecutionService
                 throw new \InvalidArgumentException("Unsupported language: $language");
         }
     }
-
     private static function executePHPCode($code)
     {
         ob_start();
@@ -31,17 +33,32 @@ class CodeExecutionService
             eval($code);
             $output = ob_get_clean();
             return [
-                'result' => $output,
-                'error' => null,
+                'output' => $output,
+                'result' => 'Code executed successfully',
+            ];
+        } catch (ParseError $parseError) {
+            $error = ob_get_clean();
+            return [
+                'output' => null,
+                'result' => 'Parse error: ' . $parseError->getMessage(),
+            ];
+        } catch (Error $error) {
+            $error = ob_get_clean();
+            return [
+                'output' => null,
+                'result' => 'Runtime error: ' . $error->getMessage(),
             ];
         } catch (Exception $e) {
             $error = ob_get_clean();
             return [
-                'result' => null,
-                'error' => $error,
+                'output' => null,
+                'result' => 'Exception: ' . $e->getMessage(),
             ];
         }
     }
+
+
+
     private static function executePythonCode($code)
     {
         $descriptors = [
@@ -60,21 +77,21 @@ class CodeExecutionService
             fclose($pipes[2]);
             $resultCode = proc_close($process);
             if ($resultCode === 0) {
-                dd($output);
+               // dd($output);
                 return [
-                    'result' => $output,
-                    'error' => null,
+                    'output' => $output,
+                    'result' => 'Code executed successfully',
                 ];
             } else {
                 return [
-                    'result' => null,
-                    'error' => $error,
+                    'output' => null,
+                    'result' => $error,
                 ];
             }
         } else {
             return [
-                'result' => null,
-                'error' => 'Failed to open process.',
+                'output' => null,
+                'result' => 'Failed to open process.',
             ];
         }
     }
@@ -89,16 +106,15 @@ class CodeExecutionService
             $output = shell_exec($runCommand);
             unlink("{$cppFile}.out");
             unlink("{$cppFile}.cpp");
-            dd($output);
             return [
-                'result' => $output,
-                'error' => null,
+                'output' => $output,
+                'result' => "Code executed successfully",
             ];
         } else {
             unlink("{$cppFile}.cpp");
             return [
-                'result' => null,
-                'error' => implode("\n", $compileOutput),
+                'output' => null,
+                'result' => implode("\n", $compileOutput),
             ];
         }
     }
@@ -113,16 +129,15 @@ class CodeExecutionService
             $output = shell_exec($runCommand);
             unlink("{$cFile}.out");
             unlink("{$cFile}.c");
-            dd($output);
             return [
-                'result' => $output,
-                'error' => null,
+                'output' => $output,
+                'result' => 'Code executed successfully',
             ];
         } else {
             unlink("{$cFile}.c");
             return [
-                'result' => null,
-                'error' => implode("\n", $compileOutput), 
+                'output' => null,
+                'result' => implode("\n", $compileOutput), 
             ];
         }
     }   

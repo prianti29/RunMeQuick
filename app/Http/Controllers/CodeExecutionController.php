@@ -8,17 +8,24 @@ class CodeExecutionController extends Controller
 {
     public function showForm()
     {
-        return view('code_execution.index');
+        return view('code_execution.index', [
+            'executionResult' => null ,
+            'selectedLanguage' => null,
+            'code' => null,
+            'runtime' => null,
+        ]);
     }
     public function executeCode(Request $request)
     {
-    $selectedLanguage = $request->input('runtime');
-    $executionResult = CodeExecutionService::executeCodeByLanguage($selectedLanguage, $request->input('code'));
-    return redirect()->route('code-execution.form')->with([
-        'executionStatus' => 'Queued',
-        'executionResult' => null, 
-        'selectedLanguage' => $selectedLanguage, 
-    ]);
+        $selectedLanguage = $request->input('runtime');
+        $code = $request->input('code');
+        $executionResult = CodeExecutionService::executeCodeByLanguage($selectedLanguage, $code);  
+        return view('code_execution.index')->with([
+            'executionResult' => $executionResult,
+            'selectedLanguage' => $selectedLanguage,
+            'code' => $code,
+            'runtime' => $selectedLanguage,
+        ]);
     }
     public function showExecutions()
     {
