@@ -14,8 +14,8 @@
             <option value="c" {{ $runtime == 'c' ? 'selected' : '' }}>C</option>
             <option value="cpp" {{ $runtime == 'cpp' ? 'selected' : '' }}>C++</option>
         </select>
-        <br>
-        <button type="submit">Execute Code</button>
+        <br> <br>
+        <button type="submit" class="btn btn-success">Execute Code</button>
     </form>
 
     {{-- @if(session('executionResult'))
@@ -26,16 +26,15 @@
             <pre>{{ session('executionResult')['output'] }}</pre>
         @endif
     @endif --}}
-
-    @if($executionResult)
-        <h3>Execution Result:</h3>
-        <pre>{{ $executionResult['result'] }}</pre>
-            @if($executionResult['output'])
-                <h3>Execution Output:</h3>
-                <pre>{{ $executionResult['output'] }}</pre>
-            @endif
-    @endif
-
-  
+    <div class="result" style="width: 66%">
+        @if($executionResult)
+            <h3>Execution Result:</h3>
+            <pre>{{ $executionResult['result'] }}</pre>
+                @if($executionResult['output'])
+                    <h3>Execution Output:</h3>
+                    <pre>{{ $executionResult['output'] }}</pre>
+                @endif
+        @endif
+    </div>
 </div>
 @endsection
